@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AgentTimeline } from "@/components/agent-timeline";
 import { Panel, PanelHeader, Pill, StatCard, StatusPill } from "@/components/ui";
 import { bootstrap } from "@/lib/bootstrap";
+import { requireSession } from "@/lib/auth/guard";
 import { listAgentRuns, listRequests } from "@/lib/db/repository";
 import { getDashboardMetrics, getRequestBundle } from "@/lib/queries";
 import { CATEGORY_LABEL, type ProcurementRequest } from "@/lib/domain/types";
@@ -10,6 +11,7 @@ import { formatDate, formatMoney } from "@/lib/util";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  await requireSession("/");
   await bootstrap();
 
   const metrics = getDashboardMetrics();

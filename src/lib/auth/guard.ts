@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { ROLE_LABEL, isRole, type Role } from "./roles";
 
 /** HTTP response for a failed auth check, for use by route handlers. */
@@ -41,6 +42,20 @@ export async function requireAuth(): Promise<AuthResult> {
     },
     error: null,
   };
+}
+
+/**
+ * Page-level gate: every screen that renders procurement data asks for a
+ * session itself rather than trusting the proxy's matcher to have caught the
+ * request first. Anonymous visitors land on the login screen with a return
+ * path, the same way the proxy would have sent them.
+ */
+export async function requireSession(path: string): Promise<SessionActor> {
+  const result = await requireAuth();
+  if (result.error) {
+    redirect(`/login?next=${encodeURIComponent(path)}`);
+  }
+  return result.actor;
 }
 
 const ALL_ROLES = new Set<string>([

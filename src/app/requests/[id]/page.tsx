@@ -23,6 +23,7 @@ import {
   StatusPill,
 } from "@/components/ui";
 import { getSupplier, listRequestDocuments } from "@/lib/db/repository";
+import { requireSession } from "@/lib/auth/guard";
 import { getRequestBundle } from "@/lib/queries";
 import { CATEGORY_LABEL, type ApprovalStep } from "@/lib/domain/types";
 import { formatDate, formatMoney } from "@/lib/util";
@@ -33,6 +34,9 @@ export default async function RequestDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  // The session check comes before the lookup so an anonymous visitor is sent
+  // to login rather than being told whether this reference exists at all.
+  await requireSession(`/requests/${id}`);
   const bundle = getRequestBundle(id);
   if (!bundle) notFound();
 

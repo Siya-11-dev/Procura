@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listSuppliers } from "@/lib/db/repository";
 import { bootstrap } from "@/lib/bootstrap";
+import { requireSession } from "@/lib/auth/guard";
 import { CATEGORY_LABEL, type Supplier } from "@/lib/domain/types";
 import { formatMoney, formatPercent } from "@/lib/util";
 import { Panel, PanelHeader, Pill, ScoreBar, StatCard } from "@/components/ui";
@@ -8,6 +9,7 @@ import { Panel, PanelHeader, Pill, ScoreBar, StatCard } from "@/components/ui";
 export const dynamic = "force-dynamic";
 
 export default async function SuppliersPage() {
+  await requireSession("/suppliers");
   await bootstrap();
   const suppliers = listSuppliers();
 
