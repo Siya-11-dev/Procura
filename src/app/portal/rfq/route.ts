@@ -12,9 +12,24 @@ import {
   updateRfqInvitation,
 } from "@/lib/db/repository";
 import { resumeAfterQuotes, type Actor } from "@/lib/pipeline";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { nowIso, round, todayIso } from "@/lib/util";
 
 const VAT_RATE = 15;
+
+/**
+ * The token is the only secret standing between an anonymous visitor and the
+ * quotation forms, so a wrong token counts against its client immediately:
+ * eight misses in five minutes buys a cooling-off period instead of unlimited
+ * guesses.
+ */
+const TOKEN_GUESSING = { limit: 8, windowMs: 5 * 60_000 };
+
+function clientKey(request: NextRequest): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  const first = forwarded?.split(",")[0]?.trim();
+  return first || request.headers.get("x-real-ip") || "unknown";
+}
 
 function field(form: FormData, name: string): string {
   return String(form.get(name) ?? "").trim();
@@ -40,6 +55,19 @@ export async function POST(request: NextRequest): Promise<Response> {
 
   const invitation = token ? findRfqInvitationByToken(token) : null;
   if (!invitation) {
+    const verdict = checkRateLimit(`portal-rfq:${clientKey(request)}`, TOKEN_GUESSING);
+    if (!verdict.allowed) {
+      return new Response(
+        "Too many attempts with that link. Wait a few minutes, then open the link from your email again.",
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Retry-After": String(verdict.retryAfterSec),
+          },
+        },
+      );
+    }
     redirect("/portal?error=That invitation link is not valid.");
   }
 
