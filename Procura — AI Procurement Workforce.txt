@@ -1,0 +1,38 @@
+Procura — AI Procurement Workforce
+
+This is one of my favourites.
+
+A company needs to purchase something.
+
+Instead of:
+
+Employee → Procurement → Emails → Suppliers → Quotes → Spreadsheet → Approval → PO
+
+you build:
+
+Request → AI sourcing → comparison → risk analysis → approval → purchase order
+
+Agents:
+
+Request Agent — understands what the employee needs.
+Supplier Agent — finds suitable suppliers.
+Quote Agent — requests/reads quotations.
+Comparison Agent — compares price, quality, terms and delivery.
+Risk Agent — checks supplier risk.
+Negotiation Agent — prepares negotiation recommendations.
+Approval Agent — routes the purchase.
+PO Agent — creates the purchase order.
+Invoice Agent — later checks invoice against the PO.
+
+The selling point becomes:
+
+"Reduce procurement costs and the amount of manual procurement work."
+
+
+To dos
+Clarification loop (Low–Med) – stops bad sourcing early
+PO dispatch + acknowledgement (Med) – actually closes loop to supplier
+GRN + tolerance-based 3-way match (Med–High) – prevents false "invoice flagged" and catches qty issues
+Budget enforcement + DOA from DB (Med) – prevents maverick spend + realistic approvals
+Sanctions/B-BBEE expiry checks (Med) – meaningful compliance lift
+Async quote collection + supplier portal (Med–High) – moves from demo to realistic
