@@ -13,6 +13,7 @@
     "test:coverage": "vitest run --coverage",
     "user:create": "node --experimental-strip-types --import ./scripts/register-hook.mjs scripts/user-create.ts",
     "demo": "node --experimental-strip-types --import ./scripts/register-hook.mjs scripts/demo.ts",
+  "db:backup": "node --experimental-strip-types --import ./scripts/register-hook.mjs scripts/db-backup.ts",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "dependencies": {

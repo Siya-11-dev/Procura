@@ -23,6 +23,11 @@ function dbPath(): string {
   return process.env.PROCURA_DB_PATH ?? path.join(DB_DIR, "procura.db");
 }
 
+/** Where the database file actually lives, for backups and diagnostics. */
+export function databaseFile(): string {
+  return dbPath();
+}
+
 function open(): DatabaseSync {
   const target = dbPath();
   mkdirSync(path.dirname(target), { recursive: true });
